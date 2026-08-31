@@ -10,7 +10,6 @@ A real-time collaborative code editor — think a lightweight, single-file Repli
 - **Shareable room links** — invite collaborators with a link; room owners can toggle link-sharing on/off and set the default role (editor/viewer) granted to new joiners.
 - **Role-based permissions** — owner, editor, and viewer roles per room, enforced on both REST endpoints and the real-time sync connection.
 - **Sandboxed code execution** — run code inside ephemeral, resource-limited, network-isolated Docker containers.
-- **Live language switching** — changing the room's language updates instantly for every connected collaborator.
 - **Persistent documents** — room content is saved to MongoDB and automatically restored the next time anyone opens the room, even after a server restart.
 
 ## Tech Stack
@@ -80,21 +79,6 @@ npm run dev
 
 The app will be available at `http://localhost:5173`.
 
-## Roles & Permissions
-
-| Role   | Edit content | Run code | Change room settings | Delete room |
-|--------|:---:|:---:|:---:|:---:|
-| Owner  | ✅ | ✅ | ✅ | ✅ |
-| Editor | ✅ | ✅ | ❌ | ❌ |
-| Viewer | ❌ | ❌ | ❌ | ❌ |
-
-## Roadmap
-
-- [ ] Multi-file / project support
-- [ ] Custom stdin input for code execution, synced as shared document state
-- [ ] Server-side enforcement of viewer read-only access (currently UI-level only)
-- [ ] Ownership transfer flow
-- [ ] Execution result broadcasting to all room participants, not just the requester
 
 ## License
 

@@ -8,6 +8,7 @@ import { Auth } from './context/AuthContext';
 import useAuth from './Hooks/useAuth';
 import Code from './pages/Code';
 import { useState } from 'react';
+import Loader from './components/Loader';
 
 function App() {
 
@@ -35,7 +36,7 @@ function App() {
   },[])
 
   if(checkingAuth){
-    return <div className='w-screen h-screen flex justify-center items-center'><span>Loading......</span></div>
+    return <Loader/>
   }
 
 

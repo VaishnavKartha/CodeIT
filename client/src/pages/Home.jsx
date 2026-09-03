@@ -7,6 +7,7 @@ import axiosInstance from '../lib/axios';
 import { useContext } from 'react';
 import { Room } from '../context/RoomContext';
 import RoomForm from '../components/RoomForm';
+import Loader from '../components/Loader';
 
 const Home = () => {
 
@@ -61,7 +62,7 @@ const Home = () => {
 
 
     if(isFetching){
-        return <div>Loading.......</div>
+        return <Loader/>
     }
 
     console.log(rooms);

@@ -11,6 +11,7 @@ import connectDB from './lib/db.js';
 import membershipCollection from './models/membership.collection.js';
 import roomCollection from './models/room.collections.js';
 import * as Y from 'yjs';
+import { runTest } from './lib/test.js';
 
 const PORT = process.env.PORT;
 

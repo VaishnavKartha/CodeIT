@@ -8,16 +8,17 @@ import { useContext } from 'react';
 import { Auth } from '../context/AuthContext';
 import { Room } from '../context/RoomContext';
 
-const CollabEditor = ({activeLanguage}) => {
+const CollabEditor = ({activeLanguage,onDocReady=()=>{}}) => {
   const [editorInstance, setEditorInstance] = useState(null);
   const [isSynced, setIsSynced] = useState(false);
   const { roomid } = useParams();
   
   const ydocRef = useRef(null);
+  const ymapRef = useRef(null);
   const providerRef = useRef(null);
   const {authUser} = useContext(Auth);
 
-  const {setOnlineMembers} = useContext(Room);
+  const {setOnlineMembers,setLiveLanguage} = useContext(Room);
 
   // 1. Initialize Yjs and WebSocket Provider immediately when the room changes
   useEffect(() => {
@@ -53,12 +54,26 @@ const CollabEditor = ({activeLanguage}) => {
 
     ydocRef.current = ydoc;
     providerRef.current = provider;
+    onDocReady(ydoc)
+    const ymap = ydoc.getMap("language");
+    const handleChange=()=>{
+      const lang = ymap.get("language");
+      console.log(lang);
+      if(lang){
+        setLiveLanguage(lang);
+      }
+
+
+    }
+    ymap.observe(handleChange)
+    handleChange();
 
     
 
     return () => {
       provider.destroy();
       ydoc.destroy();
+      ymap.unobserve(handleChange)
     };
   }, [roomid]);
 
@@ -84,6 +99,8 @@ const CollabEditor = ({activeLanguage}) => {
       binding.destroy();
     };
   }, [editorInstance, isSynced]); 
+
+  
 
   const handleMount = (editor) => {
     setEditorInstance(editor);

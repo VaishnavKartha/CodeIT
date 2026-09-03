@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import CollabEditor from '../components/CollabEditor'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useEffect } from 'react';
@@ -9,6 +9,7 @@ import LanguageSelector from '../components/LanguageSelector';
 import ViewCollaborators from '../components/ViewCollaborators';
 import { useContext } from 'react';
 import { Room } from '../context/RoomContext';
+import Loader from '../components/Loader';
 
 const Code = () => {
 
@@ -18,6 +19,7 @@ const Code = () => {
     const navigate = useNavigate();
     const [roomMembers,setRoomMembers] = useState([]);
     const [roomInfo,setRoomInfo] = useState(null);
+    const ydocRef = useRef(null)
 
    useEffect(() => {
     const doJoin = async () => {
@@ -57,6 +59,7 @@ const Code = () => {
 
         const previousLanguage = roomInfo.roomId.language;
         setRoomInfo(prev=>({...prev,roomId:{...prev.roomId,language:language.lang}}))
+        ydocRef.current.getMap('language').set('language', language.lang);
         try {
             
             const res = await updateRoomLanguage(roomid,language.lang);
@@ -75,7 +78,7 @@ const Code = () => {
     }
 
     if(joinStatus === "joining"){
-        return <div>Joining Room....</div>
+        return <Loader/>
     }
 
     if(joinStatus === "denied"){
@@ -97,7 +100,7 @@ const Code = () => {
             <ViewCollaborators roomMembers={roomMembers}/>
 
         </div>
-        <CollabEditor activeLanguage={roomInfo?.roomId?.language}/>
+        <CollabEditor activeLanguage={roomInfo?.roomId?.language} onDocReady={(ydoc) => { ydocRef.current = ydoc; }}/>
 
     </div>
   )

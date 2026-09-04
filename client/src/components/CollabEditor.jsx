@@ -8,7 +8,14 @@ import { useContext } from 'react';
 import { Auth } from '../context/AuthContext';
 import { Room } from '../context/RoomContext';
 
-const CollabEditor = ({activeLanguage,onDocReady=()=>{}}) => {
+const CollabEditor = ({
+                        activeLanguage,
+                        onDocReady=()=>{},
+                        running=false,
+                        setSomeoneElseRunning=()=>{},
+                        setExecResult=()=>{}
+                      }) => {
+
   const [editorInstance, setEditorInstance] = useState(null);
   const [isSynced, setIsSynced] = useState(false);
   const { roomid } = useParams();
@@ -17,8 +24,9 @@ const CollabEditor = ({activeLanguage,onDocReady=()=>{}}) => {
   const ymapRef = useRef(null);
   const providerRef = useRef(null);
   const {authUser} = useContext(Auth);
-
   const {setOnlineMembers,setLiveLanguage} = useContext(Room);
+
+  //console.log(authUser);
 
   // 1. Initialize Yjs and WebSocket Provider immediately when the room changes
   useEffect(() => {
@@ -40,25 +48,43 @@ const CollabEditor = ({activeLanguage,onDocReady=()=>{}}) => {
         },
         
         onAwarenessChange:({states})=>{
-          console.log(states)
+          //console.log(states)
+          //console.log(states);
+          //console.log(users);
           const users = states.map(s=>s.user).filter(Boolean);
-          console.log(users);
           setOnlineMembers(users);
+          const status = states.some(s=>
+            s?.user?.id !== authUser.userId && s?.codeStatus?.running === true 
+              
+          )
+          //console.log(status);
+          setSomeoneElseRunning(status);
         }
     });
 
     provider.setAwarenessField('user',{
       id:authUser?.userId,
       name:authUser?.username
+    });
+
+    provider.setAwarenessField('codeStatus',{
+      running:running
     })
+
+    
 
     ydocRef.current = ydoc;
     providerRef.current = provider;
     onDocReady(ydoc)
+
+
     const ymap = ydoc.getMap("language");
+    const execMap = ydoc.getMap("execution");
+
+
     const handleChange=()=>{
       const lang = ymap.get("language");
-      console.log(lang);
+      //console.log(lang);
       if(lang){
         setLiveLanguage(lang);
       }
@@ -68,12 +94,22 @@ const CollabEditor = ({activeLanguage,onDocReady=()=>{}}) => {
     ymap.observe(handleChange)
     handleChange();
 
+    const handleExecution=()=>{
+      const execResult = execMap.get("execution");
+      //console.log(execResult);
+      setExecResult(execResult)
+    }
+
+    execMap.observe(handleExecution);
+    handleExecution();
+
     
 
     return () => {
       provider.destroy();
       ydoc.destroy();
-      ymap.unobserve(handleChange)
+      ymap.unobserve(handleChange);
+      execMap.unobserve(handleExecution)
     };
   }, [roomid]);
 
@@ -85,7 +121,7 @@ const CollabEditor = ({activeLanguage,onDocReady=()=>{}}) => {
     const provider = providerRef.current;
     const yText = ydoc.getText('editor');
 
-    console.log('[DEBUG ENGINE] Attaching binding. Text state received:', yText.toString());
+    //console.log('[DEBUG ENGINE] Attaching binding. Text state received:', yText.toString());
 
     // Create the binding
     const binding = new MonacoBinding(
@@ -99,6 +135,18 @@ const CollabEditor = ({activeLanguage,onDocReady=()=>{}}) => {
       binding.destroy();
     };
   }, [editorInstance, isSynced]); 
+
+  useEffect(()=>{
+
+    console.log("Effect Running");
+
+    if(!providerRef?.current) return
+
+    providerRef?.current.setAwarenessField('codeStatus',{
+      running:running
+    })
+
+  },[running])
 
   
 

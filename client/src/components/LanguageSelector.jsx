@@ -8,7 +8,7 @@ const LanguageSelector = ({activeLanguage={lang:"python",version:"3.1"},setActiv
     
     const [isOpen,setIsOpen] = useState(false);
     const {liveLanguage} = useContext(Room);
-
+    //console.log(`Current Language: ${liveLanguage},${activeLanguage}`)
   return (
     <div className='mt-2 mb-1 border w-fit mx-auto'>
       <div className='p-1 relative flex items-center'>

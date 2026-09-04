@@ -24,7 +24,7 @@ const Home = () => {
                 const rooms = await getRooms();
                 setRooms(rooms);
             } catch (error) {
-                console.log(error.message)
+                //console.log(error.message)
                 
             }finally{
                 setIsFetching(false);
@@ -55,7 +55,7 @@ const Home = () => {
             const {data} = await axiosInstance.get(`/room/${roomid}`);
             navigate(`/room/${roomid}/edit`)
         } catch (error) {
-            console.log(error);
+            //console.log(error);
         }
 
     }
@@ -65,7 +65,7 @@ const Home = () => {
         return <Loader/>
     }
 
-    console.log(rooms);
+    //console.log(rooms);
 
 
   return (

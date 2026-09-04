@@ -7,6 +7,7 @@ import jwt from 'jsonwebtoken';
 import * as cookie from 'cookie';
 import authRouter from './routes/auth.route.js';
 import roomRouter from './routes/room.route.js';
+import executeRouter from './routes/execute.route.js';
 import connectDB from './lib/db.js';
 import membershipCollection from './models/membership.collection.js';
 import roomCollection from './models/room.collections.js';
@@ -22,6 +23,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use("/api/auth", authRouter);
 app.use("/api/room", roomRouter);
+app.use("/api/run",executeRouter);
 
 const server = createServer(app);
 server.listen(PORT, () => {

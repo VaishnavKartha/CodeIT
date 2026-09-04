@@ -10,6 +10,8 @@ import ViewCollaborators from '../components/ViewCollaborators';
 import { useContext } from 'react';
 import { Room } from '../context/RoomContext';
 import Loader from '../components/Loader';
+import useRun from '../Hooks/useRun';
+import Output from '../components/Output';
 
 const Code = () => {
 
@@ -19,6 +21,12 @@ const Code = () => {
     const navigate = useNavigate();
     const [roomMembers,setRoomMembers] = useState([]);
     const [roomInfo,setRoomInfo] = useState(null);
+    const {runCode} = useRun();
+    const [isExecuting,setIsExecuting] = useState(false);
+    const [someoneElseRunning,setSomeoneElseRunning] = useState(false);
+    const [execResult,setExecResult] = useState({});
+
+    //const [isRunButtonActive,setIsRunButtonActive] = useState(true);
     const ydocRef = useRef(null)
 
    useEffect(() => {
@@ -30,12 +38,12 @@ const Code = () => {
             toast.success("You are now a collaborator");
             setJoinStatus("success");
             setRoomInfo(res);
-            console.log(res);
+            //console.log(res);
 
 
 
             const members = await getRoomMembers(roomid);
-            console.log(members)
+            //console.log(members)
             setRoomMembers(members);
 
 
@@ -53,7 +61,7 @@ const Code = () => {
     const updateEditorLanguage = async(language)=>{
         if(language.lang.toLowerCase() === roomInfo?.roomId?.language.toLowerCase()) return
 
-        console.log(language.lang);
+        //console.log(language.lang);
 
         // update room language logic.....
 
@@ -77,6 +85,30 @@ const Code = () => {
 
     }
 
+
+    const handleCodeExecution=async()=>{
+        const language = roomInfo.roomId.language;
+        const code = ydocRef?.current?.getText('editor').toString();
+        if(!language?.trim() ) return
+
+        if(!code?.trim()) return toast.error("Editor empty!!!",{duration:1000});
+        try {
+            setIsExecuting(true);
+            const res = await runCode(roomid,{language,code});
+            //console.log(res);
+            //setExecResult(res);
+            ydocRef.current.getMap('execution').set('execution',res)
+            
+        } catch (error) {
+            //console.log(error);
+        }finally{
+            setIsExecuting(false);
+        }
+
+    }
+
+
+
     if(joinStatus === "joining"){
         return <Loader/>
     }
@@ -94,13 +126,37 @@ const Code = () => {
                 {roomInfo && <h3 className='text-sm'>{roomInfo?.roomId?.roomName}</h3>}
             </div>
 
+            <div className='flex gap-4 md:gap-12'>
 
-            <LanguageSelector activeLanguage={roomInfo?.roomId?.language} setActiveLanguage={updateEditorLanguage}/>
+                <LanguageSelector activeLanguage={roomInfo?.roomId?.language} setActiveLanguage={updateEditorLanguage}/>
+
+                <div className='mt-auto mr-4'>
+                    <button
+                        disabled={isExecuting || someoneElseRunning}
+                        onClick={handleCodeExecution}
+                        className='ml-auto bg-blue-600 p-2 rounded-lg cursor-pointer hover:bg-blue-600/80 active:bg-blue-600/70'>
+                            { (isExecuting || someoneElseRunning) ? <span className='w-8 h-8 border-2 border-white border-b-blue-500  rounded-full animate-spin'></span> : <span>Run Code</span>}
+                    </button>
+                </div>
+
+            </div>
 
             <ViewCollaborators roomMembers={roomMembers}/>
 
         </div>
-        <CollabEditor activeLanguage={roomInfo?.roomId?.language} onDocReady={(ydoc) => { ydocRef.current = ydoc; }}/>
+        <div className='grid grid-cols-2 h-[90vh]'>
+
+            <CollabEditor 
+                activeLanguage={roomInfo?.roomId?.language} 
+                onDocReady={(ydoc) => { ydocRef.current = ydoc; }} 
+                running={isExecuting}
+                setSomeoneElseRunning={setSomeoneElseRunning}
+                setExecResult={setExecResult}
+            />
+
+            <Output output={execResult}/>
+
+        </div>
 
     </div>
   )

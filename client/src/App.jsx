@@ -22,9 +22,9 @@ function App() {
         
         const data = await getMe();
         setAuthUser(data);
-        console.log(data)
+        //console.log(data)
       } catch (error) {
-        console.log(error.message);
+        //console.log(error.message);
       }finally{
         setCheckingAuth(false);
       }

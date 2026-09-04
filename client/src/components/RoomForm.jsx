@@ -27,7 +27,7 @@ const RoomForm = () => {
         try {
             setDisable(true);
             const res = await createRoom(formData);
-            console.log(res)
+            //console.log(res)
             navigate(`/room/${res._id}/edit`);
             
         } catch (error) {
@@ -38,7 +38,7 @@ const RoomForm = () => {
     }
    
 
-    console.log(formData);
+    //console.log(formData);
   return (
     <div className='z-20 rounded-md shadow-lg w-screen sm:w-[70%] mx-2 sm:mx-0 py-4 px-2 absolute top-[30%] left-[50%] transform translate-y-[-50%] translate-x-[-50%] bg-zinc-900'>
       <h1 className='text-3xl'>Create New Project</h1>

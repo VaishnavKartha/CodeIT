@@ -14,7 +14,7 @@ const CollabIcon=({userIcon})=>{
     )
 }
 
-const ListAllCollaboratord=({members,isOpen,setIsOpen=()=>{}})=>{
+const ListAllCollaborators=({members,isOpen,setIsOpen=()=>{}})=>{
     const {onlineMembers} = useContext(Room);
 
     const onlineIds = useMemo(
@@ -62,7 +62,7 @@ const ViewCollaborators = ({roomMembers}) => {
     const [isOpen,setIsOpen] = useState(false);
   return (
     <>
-        <div className='flex relative mr-12 items-center'>
+        <div className='flex relative mr-4 md:mr-12 items-center'>
         {roomMembers.length > 0 && roomMembers.slice(0,3).map((member,index)=>{
                 
             return <CollabIcon key={index} userIcon={member.userId.username}/>
@@ -71,7 +71,7 @@ const ViewCollaborators = ({roomMembers}) => {
             <div onClick={()=>setIsOpen(true)} className='text-[14px] text-zinc-300 cursor-pointer mt-auto'>view all</div>
         </div>
 
-        <ListAllCollaboratord members = {roomMembers} isOpen={isOpen} setIsOpen={setIsOpen}/>
+        <ListAllCollaborators members = {roomMembers} isOpen={isOpen} setIsOpen={setIsOpen}/>
     </>
   )
 }

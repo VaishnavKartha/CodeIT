@@ -221,6 +221,65 @@ export const logout=async(req,res)=>{
     }
 }
 
+export const isPasswordLogin=async(req,res)=>{
+    try {
+        const user = req.user;
+        if(user?.password !== undefined){
+            return res.status(200).json({message:true});
+        }
+        return res.status(200).json({message:false});
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).json({error:error.message});
+    }
+}
+export const updateProfile=async(req,res)=>{
+    try {
+        const user = req.user;
+        const {username} = req.body;
+        if(!username?.trim()){
+            return res.status(400).json({message:"Inavalid request"});
+        }
+        const result = await User.findByIdAndUpdate(user._id,{$set:{username}},{returnDocument:'after'});
+        if(!result){
+            return res.status(400).json({message:"Updation Failed"});
+        }
+
+        return res.status(200).json({message:"Username updated successfully"});
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).json({error:error.message});
+    }
+}
+
+
+export const updatePassword = async(req,res)=>{
+    try {
+        const {password} = req.body;
+        const user = req.user;
+
+        if(!password?.trim() || password.length < 6){
+            return res.status(400).json({message:"Invalid Password"});
+        }
+        const hashedPassword = await bcrypt.hash(password,10);
+
+        if(!hashedPassword){
+            return res.status(400).json({message:"Operation Failed1"});
+        }
+        const updatedUser = await User.findOneAndUpdate({_id:user._id},{$set:{password:hashedPassword}},{returnDocument:'after'});
+        console.log(updatedUser)
+        if(!updatedUser){
+            return res.status(400).json({message:"Operation Failed2"});
+        }
+
+        return res.status(200).json({message:"Password updated successfully"});
+
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).json({error:error.message});
+    }
+}
+
 export const deleteAccount=async(req,res)=>{
     try {
         const user = req.user;

@@ -119,32 +119,37 @@ const Code = () => {
     }
     
   return (
-    <div>
-        <div className='flex justify-between'>
-
-            <div className='mt-auto bg-[#1E1E1E] p-2'>
-                {roomInfo && <h3 className='text-sm'>{roomInfo?.roomId?.roomName}</h3>}
-            </div>
-
-            <div className='flex gap-4 md:gap-12'>
+    <div className=''>
+        <div className='flex justify-end gap-2 md:gap-12 py-2  '>
+            <div className='max-sm:hidden flex md:mx-auto'>
 
                 <LanguageSelector activeLanguage={roomInfo?.roomId?.language} setActiveLanguage={updateEditorLanguage}/>
 
-                <div className='mt-auto mr-4'>
-                    <button
-                        disabled={isExecuting || someoneElseRunning}
-                        onClick={handleCodeExecution}
-                        className='ml-auto bg-blue-600 p-2 rounded-lg cursor-pointer hover:bg-blue-600/80 active:bg-blue-600/70'>
-                            { (isExecuting || someoneElseRunning) ? <span className='w-8 h-8 border-2 border-white border-b-blue-500  rounded-full animate-spin'></span> : <span>Run Code</span>}
-                    </button>
-                </div>
 
             </div>
 
-            <ViewCollaborators roomMembers={roomMembers}/>
+            <div className='flex gap-2 md:gap-12'>
+
+                <div className='mt-auto'>
+                    <button
+                        disabled={isExecuting || someoneElseRunning}
+                        onClick={handleCodeExecution}
+                        className=' max-md:text-[12px] bg-blue-600 p-1 md:p-2 rounded-lg cursor-pointer hover:bg-blue-600/80 active:bg-blue-600/70'>
+                            { (isExecuting || someoneElseRunning) ? <span className='w-8 h-8 border-2 border-white border-b-blue-500  rounded-full animate-spin'></span> : <span>Run Code</span>}
+                    </button>
+                </div>
+                <ViewCollaborators roomMembers={roomMembers}/>
+            </div>
+
 
         </div>
-        <div className='grid grid-cols-2 h-[90vh]'>
+        <div className='relative grid grid-cols-1 md:grid-cols-2 h-screen md:h-[90vh]'>
+
+
+            <div className='absolute top-0 transform -translate-y-full left-0 bg-[#1E1E1E] p-2'>
+                {roomInfo && <h3 className='text-[12px] md:text-sm'>{roomInfo?.roomId?.roomName}</h3>}
+            </div>
+
 
             <CollabEditor 
                 activeLanguage={roomInfo?.roomId?.language} 

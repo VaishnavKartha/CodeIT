@@ -9,6 +9,7 @@ import useAuth from './Hooks/useAuth';
 import Code from './pages/Code';
 import { useState } from 'react';
 import Loader from './components/Loader';
+import Settings from './pages/Settings';
 
 function App() {
 
@@ -22,7 +23,7 @@ function App() {
         
         const data = await getMe();
         setAuthUser(data);
-        //console.log(data)
+        console.log(data)
       } catch (error) {
         //console.log(error.message);
       }finally{
@@ -49,6 +50,7 @@ function App() {
       <Route path='/' element={authUser?<Home/>: <Navigate to="/login" />}/>
       <Route path='/login' element={!authUser?<Login/>:<Navigate to="/" />}/>
       <Route path='/signup' element={!authUser?<Signup/>: <Navigate to="/"/>} />
+      <Route path='/settings' element={authUser ? <Settings/> : <Navigate to="/login"/>}/>
       <Route path='/room/:roomid/edit' element={authUser?<Code/>:<Navigate to="/login"/>} />
     </Routes>
     </>

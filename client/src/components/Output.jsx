@@ -3,7 +3,7 @@ import React from 'react'
 const Output = ({output={}}) => {
     const {stdout,stderr,timedOut} = output;
   return (
-    <div className='bg-zinc-800 p-2 wrap-break-word overflow-y-scroll'>
+    <div className='max-md:h-[50vh] bg-zinc-800 p-2 wrap-break-word overflow-y-scroll'>
       {
 
       stdout ? <span>{stdout}</span> : 

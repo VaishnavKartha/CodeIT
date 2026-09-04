@@ -3,6 +3,8 @@ import axiosInstance from '../lib/axios'
 import {toast} from 'react-hot-toast';
 import { useContext } from 'react';
 import { Auth } from '../context/AuthContext';
+import { useState } from 'react';
+import { UserRoundArrowLeft } from 'lucide-react';
 
 const useAuth = () => {
 
@@ -46,7 +48,45 @@ const useAuth = () => {
     }
   }
 
-  return { login, getMe , signup}
+  const logout=async()=>{
+    try {
+        const {data} = await axiosInstance.get("/auth/logout");
+        return data
+    } catch (error) {
+        toast.error(error.response.data.message || error.message,{duration:1000});
+    }
+  }
+
+  const isPasswordLogin=async()=>{
+    try {
+        const {data} =await axiosInstance.get("/auth/password");
+        return data;
+    } catch (error) {
+        toast.error(error.response.data.message || error.message);
+    }
+  }
+
+  const updateProfile=async(username)=>{
+    try {
+        const {data} = await axiosInstance.patch("/auth/profile",{username});
+        return data;
+    } catch (error) {
+        toast.error(error.response.data.message || error.message);
+    }
+  }
+
+  const resetPassword=async(password)=>{
+    try {
+        const {data} = await axiosInstance.patch("/auth/password",{password});
+        console.log(data);
+        return data;
+    } catch (error) {
+        toast.error(error.response.data.message || error.message);
+    }
+
+  }
+
+  return { login, getMe , signup,logout,isPasswordLogin,updateProfile,resetPassword}
 }
 
 export default useAuth

@@ -119,7 +119,7 @@ export const getRooms=async(req,res)=>{
     try {
         const user = req.user;
 
-        const userRooms = await membership.find({userId:user._id}).populate("roomId","roomName ownerId language").sort({updatedAt:-1});
+        const userRooms = await membership.find({userId:user._id}).populate("roomId","roomName ownerId language updatedAt").sort({updatedAt:-1});
 
         return res.status(200).json(userRooms.length > 0 ? userRooms:[])
         

@@ -54,7 +54,7 @@ export async function runInSandbox(
     language,
     code,
     stdin = '',
-    timeoutMs = 8000
+    timeoutMs = 20000
 ) {
 
 

@@ -10,8 +10,8 @@ const LanguageSelector = ({activeLanguage={lang:"python",version:"3.1"},setActiv
     const {liveLanguage} = useContext(Room);
     //console.log(`Current Language: ${liveLanguage},${activeLanguage}`)
   return (
-    <div className='mt-2 mb-1 border w-fit mx-auto max-md:text-[14px]'>
-      <div className='p-1 relative flex items-center'>
+    <div className='mt-2 mb-1 min-w-[20vw] mx-auto max-md:text-[14px] bg-zinc-900 py-2 pl-1'>
+      <div className='p-1 relative flex items-center justify-between'>
         <div className='flex items-center gap-2'>
             <span className='text-md'>{liveLanguage || activeLanguage}</span>
             <span className='text-[12px] text-zinc-500'>{ liveLanguage ? "":activeLanguage?.version}</span> 

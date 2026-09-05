@@ -12,11 +12,16 @@ import { Room } from '../context/RoomContext';
 import Loader from '../components/Loader';
 import useRun from '../Hooks/useRun';
 import Output from '../components/Output';
+import axiosInstance from '../lib/axios';
+import { Auth } from '../context/AuthContext';
+import { Settings } from 'lucide-react';
+import RoomSettings from '../components/RoomSettings';
 
 const Code = () => {
 
     const [joinStatus,setJoinStatus] = useState("joining");
     const {roomid} = useParams();
+    const {authUser} = useContext(Auth);
     const {joinRoom,getRoomMembers, updateRoomLanguage} = useEdit();
     const navigate = useNavigate();
     const [roomMembers,setRoomMembers] = useState([]);
@@ -25,10 +30,11 @@ const Code = () => {
     const [isExecuting,setIsExecuting] = useState(false);
     const [someoneElseRunning,setSomeoneElseRunning] = useState(false);
     const [execResult,setExecResult] = useState({});
+    const [openSettings,setOpenSettings] = useState(false);
 
     //const [isRunButtonActive,setIsRunButtonActive] = useState(true);
     const ydocRef = useRef(null)
-
+    
    useEffect(() => {
     const doJoin = async () => {
         
@@ -39,6 +45,7 @@ const Code = () => {
             setJoinStatus("success");
             setRoomInfo(res);
             //console.log(res);
+            
 
 
 
@@ -57,7 +64,7 @@ const Code = () => {
     doJoin();
 }, [roomid]);
 
-
+    console.log(roomInfo);
     const updateEditorLanguage = async(language)=>{
         if(language.lang.toLowerCase() === roomInfo?.roomId?.language.toLowerCase()) return
 
@@ -107,6 +114,27 @@ const Code = () => {
 
     }
 
+    const changeRoomPermission=async(newPerm)=>{
+
+        
+        if(roomInfo?.roomId?.isLinkSharingEnables === newPerm) return
+        //console.log(newPerm);
+
+        
+
+        setRoomInfo(prev=>({...prev,roomId:{...prev.roomId,isLinkSharingEnables:newPerm}}));
+
+        // route
+        try {
+            
+            const {data} = await axiosInstance.patch(`/room/edit/${roomid}`,{shareStatus:newPerm});
+            toast.success(data.message ,{duration:1000})
+        } catch (error) {
+            setRoomInfo(prev=>({...prev,roomId:{...prev.roomId,isLinkSharingEnables:!newPerm}}));
+            toast.error(error.response.data.message || error.message,{duration:1000}) ;
+        }
+    }
+
 
 
     if(joinStatus === "joining"){
@@ -121,21 +149,34 @@ const Code = () => {
   return (
     <div className=''>
         <div className='flex justify-end gap-2 md:gap-12 py-2  '>
-            <div className='max-sm:hidden flex md:mx-auto'>
-
-                <LanguageSelector activeLanguage={roomInfo?.roomId?.language} setActiveLanguage={updateEditorLanguage}/>
-
-
-            </div>
-
+            
             <div className='flex gap-2 md:gap-12'>
+
+                
+
+                <div className='relative mt-auto flex'>
+                   <button onClick={()=>setOpenSettings(!openSettings)} className='mt-auto'>
+
+                        <Settings/>
+
+                    </button> 
+
+                    {openSettings && (
+                            <RoomSettings
+                                roomInfo={roomInfo}
+                                activeLanguage={roomInfo?.roomId?.language}
+                                changeRoomPermission={changeRoomPermission}
+                                setActiveLanguage={updateEditorLanguage}
+                            />
+                        )}
+                </div>
 
                 <div className='mt-auto'>
                     <button
                         disabled={isExecuting || someoneElseRunning}
                         onClick={handleCodeExecution}
-                        className=' max-md:text-[12px] bg-blue-600 p-1 md:p-2 rounded-lg cursor-pointer hover:bg-blue-600/80 active:bg-blue-600/70'>
-                            { (isExecuting || someoneElseRunning) ? <span className='w-8 h-8 border-2 border-white border-b-blue-500  rounded-full animate-spin'></span> : <span>Run Code</span>}
+                        className='w-fit max-md:text-[12px] bg-blue-600 p-1 md:p-2 rounded-lg cursor-pointer hover:bg-blue-600/80 active:bg-blue-600/70'>
+                            { (isExecuting || someoneElseRunning) ? <div className='w-8 h-8 border-2 border-white border-b-blue-500  rounded-full animate-spin'/> : <span>Run Code</span>}
                     </button>
                 </div>
                 <ViewCollaborators roomMembers={roomMembers}/>

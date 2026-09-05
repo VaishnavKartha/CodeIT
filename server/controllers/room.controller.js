@@ -53,7 +53,7 @@ export const joinRoom=async(req,res)=>{
             return res.status(400).json({message:"Room doesnt exist"});
         }
 
-        const existingUser = await membership.findOne({userId:user._id,roomId:roomid}).populate("roomId","roomName ownerId language");
+        const existingUser = await membership.findOne({userId:user._id,roomId:roomid}).populate("roomId","roomName ownerId language isLinkSharingEnables");
 
         if(existingUser){
             return res.status(200).json(existingUser);
@@ -148,6 +148,10 @@ export const editPermission=async(req,res)=>{
         const user = req.user;
         const {roomid} = req.params;
         const {shareStatus} = req.body;
+        
+         if (typeof shareStatus !== 'boolean') {
+            return res.status(400).json({ message: "Invalid Request" });
+        }
 
         const currentRoom = await room.findById(roomid);
 

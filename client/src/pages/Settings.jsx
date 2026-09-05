@@ -61,7 +61,7 @@ const Settings = () => {
 
             <div className='flex flex-col text-center px-2'>
                 <button onClick={()=>setSelected(true)} className={` py-2 text-lg cursor-pointer rounded-md ${selected && "bg-blue-900/40 border-l-4 border-l-blue-500"}`}>User</button>
-                <button onClick={()=>setSelected(false)} className={` py-2 text-lg cursor-pointer rounded-md ${!selected && "bg-blue-900/40 border-l-4 border-l-blue-500"}`}>Rooms</button>
+               { /* <button onClick={()=>setSelected(false)} className={` py-2 text-lg cursor-pointer rounded-md ${!selected && "bg-blue-900/40 border-l-4 border-l-blue-500"}`}>Rooms</button>*/ }
             </div>
 
             <div className=''>
@@ -75,7 +75,7 @@ const Settings = () => {
         </aside>
 
         <main className='flex-1 bg-zinc-800 py-20 md:p-12 md:py-4'>
-            {selected === true ? <UserSettings/> : <RoomSettings/>}
+            {selected === true && <UserSettings/>}
         </main>
     </div>
     
